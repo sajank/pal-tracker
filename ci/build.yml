@@ -18,7 +18,5 @@ run:
   - -exc
   - |
     cd pal-tracker
-    apt-get install dos2unix
-    dos2unix -o gradlew gradlew
     ./gradlew build
     cp build/libs/pal-tracker.jar ../build-output
