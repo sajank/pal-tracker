@@ -13,6 +13,7 @@ dependencies {
     compile("org.thymeleaf:thymeleaf-spring4")
     compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
     compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
 bootRepackage {
@@ -24,7 +25,6 @@ repositories {
     maven { url "http://repo.spring.io/libs-snapshot" }
 }
 
-
 jar {
     manifest {
         attributes(
@@ -32,3 +32,13 @@ jar {
         )
     }
 }
+
+bootRun.environment([
+        "WELCOME_MESSAGE": "hello",
+])
+
+test.environment([
+        "WELCOME_MESSAGE": "Hello from test",
+])
+
+
