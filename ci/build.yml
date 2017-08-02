@@ -18,6 +18,20 @@ run:
   args:
   - -exc
   - |
-    cd pal-tracker
-    bash ./gradlew -P version=$(cat ../version/number) build
-    cp build/libs/pal-tracker-*.jar ../build-output
+
+      function stop_mysql {
+        service mysql stop
+      }
+      trap stop_mysql EXIT
+
+      export DEBIAN_FRONTEND="noninteractive"
+
+      apt-get update && \
+      apt-get -y install mariadb-server
+      service mysql start
+
+      cd pal-tracker
+
+      mysql -uroot < databases/tracker/create_databases.sql
+      ./gradlew -P version=$(cat ../version/number) testMigrate build
+      cp build/libs/pal-tracker-*.jar ../build-output
