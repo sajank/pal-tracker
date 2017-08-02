@@ -2,6 +2,9 @@ cf-api-url: api.sys.longs.pal.pivotal.io
 cf-username: sajan.khandelwal@accenture.com
 cf-password: 2dca48cf
 cf-org: sajan-khandelwal-pal
+aws-access-key-id: <YOUR_ACCESS_KEY>
+aws-secret-access-key: <YOUR_SECRET_KEY>
+aws-bucket: <YOUR_AWS_S3_BUCKET>
 github-repository: git@github.com:sajank/pal-tracker.git
 github-private-key: |
   -----BEGIN RSA PRIVATE KEY-----
