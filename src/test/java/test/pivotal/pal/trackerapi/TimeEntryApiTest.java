@@ -8,8 +8,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mariadb.jdbc.MariaDbDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -28,8 +30,22 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(classes = PalTrackerApplication.class, webEnvironment = RANDOM_PORT)
 public class TimeEntryApiTest {
 
-    @Autowired
+    @LocalServerPort
+    private String port;
     private TestRestTemplate restTemplate;
+
+    @Before
+    public void setUp() throws Exception {
+        DataSource dataSource = new MariaDbDataSource(System.getenv("SPRING_DATASOURCE_URL"));
+
+        RestTemplateBuilder builder = new RestTemplateBuilder()
+                .rootUri("http://localhost:" + port)
+                .basicAuthorization("user", "password");
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.execute("TRUNCATE time_entries");
+        restTemplate = new TestRestTemplate(builder);
+    }
 
     private TimeEntry timeEntry = new TimeEntry(123, 456, "today", 8);
 
@@ -119,13 +135,5 @@ public class TimeEntryApiTest {
 
     private Long createTimeEntry() {
         return restTemplate.postForObject("/time-entries", timeEntry, TimeEntry.class).getId();
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        DataSource dataSource = new MariaDbDataSource(System.getenv("SPRING_DATASOURCE_URL"));
-
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcTemplate.execute("TRUNCATE time_entries");
     }
 }
